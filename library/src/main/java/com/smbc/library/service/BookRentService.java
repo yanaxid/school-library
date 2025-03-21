@@ -54,7 +54,7 @@ public class BookRentService {
             .build();
 
       bookRentRepository.save(bookRent);
-      return responseUtil.ok("Book successfully rented");
+      return responseUtil.success("Book successfully rented");
    }
 
    // RETURN BOOK
@@ -80,7 +80,7 @@ public class BookRentService {
       }
 
       bookRentRepository.save(rent);
-      return responseUtil.ok("Book successfully returned");
+      return responseUtil.success("Book successfully returned");
    }
 
    // GET ALL RENTS
@@ -101,7 +101,7 @@ public class BookRentService {
                   .lastPage(rents.getTotalPages())
                   .build();
 
-          return responseUtil.okWithDataAndMeta("success.get.data", rentList, meta);
+          return responseUtil.successWithDataAndMeta("success.get.data", rentList, meta);
 
       } catch (Exception e) {
           return responseUtil.internalServerError("error.server");
@@ -112,6 +112,6 @@ public class BookRentService {
    // GET MEMBER RENT
    public ResponseEntity<MessageResponse> getRentsByMember(Long memberId) {
       List<BookRent> rents = bookRentRepository.findByMemberId(memberId);
-      return responseUtil.okWithData("Success", rents);
+      return responseUtil.successWithData("Success", rents);
    }
 }

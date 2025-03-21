@@ -1,5 +1,6 @@
 package com.smbc.library.controller;
 
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,8 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.smbc.library.dto.BookDto;
 import com.smbc.library.dto.request.CustomPageRequest;
 import com.smbc.library.dto.response.MessageResponse;
-import com.smbc.library.model.Book;
 import com.smbc.library.service.BookService;
+import com.smbc.library.util.ValidationUtil;
+import com.smbc.library.validator.BookValidator;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,10 +26,12 @@ import lombok.RequiredArgsConstructor;
 public class BookController {
 
    private final BookService bookService;
+   private final BookValidator bookValidator;
+   private final ValidationUtil validationUtil;
 
    @PostMapping("/add")
    public ResponseEntity<MessageResponse> addBook(@RequestBody BookDto request) {
-      return bookService.addBook(request);
+      return validationUtil.processWithValidation(request, bookValidator, () -> bookService.addBook(request));
    }
 
    @GetMapping("/all")
@@ -35,13 +39,21 @@ public class BookController {
       return bookService.getAllBooks(customPageRequest.getPage("penulis,asc"));
    }
 
+   @GetMapping("/{isbn}")
+   public ResponseEntity<MessageResponse> getBook(@PathVariable String isbn) {
+      return bookService.getBook(isbn);
+   }
+
    @PutMapping("/update/{id}")
-   public ResponseEntity<MessageResponse> updateBook(@PathVariable Long id, @RequestBody Book request) {
-      return bookService.updateBook(id, request);
+   public ResponseEntity<MessageResponse> updateBook(@PathVariable Long id, @RequestBody BookDto request) {
+      return validationUtil.processWithValidation(request, bookValidator, () -> bookService.addBook(request));
    }
 
    @PutMapping("/delete/{id}")
    public ResponseEntity<MessageResponse> deleteBook(@PathVariable Long id) {
       return bookService.deleteBook(id);
    }
+
+   
+   
 }

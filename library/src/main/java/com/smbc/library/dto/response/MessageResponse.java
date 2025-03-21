@@ -1,6 +1,5 @@
 package com.smbc.library.dto.response;
 
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
@@ -17,6 +16,7 @@ public class MessageResponse {
    private int statusCode;
    private String status;
    private Object data;
+   private Object error;
    private Meta meta;
 
    @Data
@@ -24,10 +24,14 @@ public class MessageResponse {
    @NoArgsConstructor
    @Builder
    public static class Meta {
-      private Long total; 
-      private int perPage; 
+      private Long total;
+      private int perPage;
       private int currentPage;
-      private int lastPage; 
+      private int lastPage;
+
+      public int getCurrentPage() {
+         return currentPage + 1;
+      }
    }
 
    public MessageResponse(String message, int statusCode, String status) {
@@ -36,10 +40,12 @@ public class MessageResponse {
       this.status = status;
    }
 
-   public MessageResponse(String message, int statusCode, String status, Object data) {
+   public MessageResponse(String message, int statusCode, String status, Object data, Object error) {
       this.message = message;
       this.statusCode = statusCode;
       this.status = status;
       this.data = data;
+      this.error = error;
    }
+
 }

@@ -4,6 +4,7 @@ import com.smbc.library.dto.BookRentDto;
 import com.smbc.library.dto.request.CustomPageRequest;
 import com.smbc.library.dto.response.MessageResponse;
 import com.smbc.library.service.BookRentService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +15,11 @@ import org.springframework.web.bind.annotation.*;
 public class BookRentController {
 
    private final BookRentService bookRentService;
+   
 
    @PostMapping("/rent")
    public ResponseEntity<MessageResponse> rentBook(@RequestBody BookRentDto request) {
+       
       return bookRentService.rentBook(request);
    }
 

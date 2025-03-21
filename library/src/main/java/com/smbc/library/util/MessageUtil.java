@@ -14,7 +14,9 @@ public class MessageUtil {
 
    private final MessageSource messageSource;
 
+
    public String get(String code, Object... args) {
+      LocaleContextHolder.setLocale(new Locale("en"));
       Locale locale = LocaleContextHolder.getLocale();
       return getMessage(code, locale, args);
    }

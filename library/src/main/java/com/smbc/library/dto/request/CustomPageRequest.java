@@ -12,20 +12,22 @@ import lombok.Setter;
 public class CustomPageRequest {
    private int page = 1;
    private int size = 10;
-   private String sort = "nama,asc";
+   private String sort = "";
 
    public Pageable getPage(String defaultSort) {
-
       String sorting = (sort != null && !sort.isEmpty()) ? sort : defaultSort;
       String[] sortParams = sorting.split(",");
-
+  
       String sortField = sortParams[0];
       Sort.Direction sortDirection = (sortParams.length > 1 && sortParams[1].equalsIgnoreCase("desc"))
-            ? Sort.Direction.DESC
-            : Sort.Direction.ASC;
-
-            int currentPage = (page <= 1) ? 0 : page - 1;
-
+              ? Sort.Direction.DESC
+              : Sort.Direction.ASC;
+  
+      int currentPage = (page <= 1) ? 0 : page - 1; 
+  
       return PageRequest.of(currentPage, size, Sort.by(sortDirection, sortField));
-   }
+  }
+
+  // t0d0 multiple sort
+
 }

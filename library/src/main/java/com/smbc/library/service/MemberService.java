@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.smbc.library.dto.MemberDto;
 import com.smbc.library.dto.response.MessageResponse;
+import com.smbc.library.enums.MessageKey;
 import com.smbc.library.model.Member;
 import com.smbc.library.repository.MemberRepository;
 import com.smbc.library.util.ResponseUtil;
@@ -28,6 +29,11 @@ public class MemberService {
    @Transactional
    public ResponseEntity<MessageResponse> addMember(MemberDto request) {
       try {
+
+         // cek duplicate email
+         if (memberRepository.findByEmailAndDeletedFalse(request.getEmail()).isPresent())
+            return responseUtil.badRequest(MessageKey.EMAIL_DUPLICATE.getKey(), null, request.getEmail());
+
          Member member = Member.builder()
                .nama(request.getNama())
                .alamat(request.getAlamat())
@@ -36,26 +42,20 @@ public class MemberService {
 
          memberRepository.save(member);
 
-         MemberDto memberResponse = MemberDto.builder()
-               .nama(member.getNama())
-               .alamat(member.getAlamat())
-               .email(member.getEmail())
-               .build();
-
-         return responseUtil.okWithData("success.save.data", memberResponse);
+         return responseUtil.successWithData(MessageKey.SUCCESS_SAVE_DATA.getKey(), member);
       } catch (Exception e) {
-         return responseUtil.internalServerError("error.server");
+         return responseUtil.internalServerError(MessageKey.ERROR_SERVER.getKey());
       }
    }
 
    // GET ALL MEMBER
    public ResponseEntity<MessageResponse> getAllMembers(Pageable pageable) {
       try {
+
          Page<Member> members = memberRepository.findByDeletedFalse(pageable);
 
-         if (members.isEmpty()) {
-            return responseUtil.notFound("error.not.found");
-         }
+         if (members.isEmpty())
+            return responseUtil.notFound(MessageKey.ERROR_NOT_FOUND.getKey(), "Member");
 
          List<Member> memberList = members.getContent();
 
@@ -66,9 +66,10 @@ public class MemberService {
                .lastPage(members.getTotalPages())
                .build();
 
-         return responseUtil.okWithDataAndMeta("success.get.data", memberList, meta);
+         return responseUtil.successWithDataAndMeta(MessageKey.SUCCESS_GET_DATA.getKey(), memberList, meta);
+
       } catch (Exception e) {
-         return responseUtil.internalServerError("error.server: " + e.getMessage());
+         return responseUtil.internalServerError(MessageKey.ERROR_SERVER.getKey());
       }
    }
 
@@ -77,13 +78,12 @@ public class MemberService {
       try {
          Optional<Member> memberOpt = memberRepository.findByIdAndDeletedFalse(id);
 
-         if (memberOpt.isEmpty()) {
-            return responseUtil.notFound("error.not.found");
-         }
+         if (memberOpt.isEmpty())
+            return responseUtil.notFound(MessageKey.ERROR_NOT_FOUND.getKey(), "Member with id " + id.toString());
 
-         return responseUtil.okWithData("success.get.data", memberOpt.get());
+         return responseUtil.successWithData(MessageKey.SUCCESS_GET_DATA.getKey(), memberOpt.get());
       } catch (Exception e) {
-         return responseUtil.internalServerError("error.server");
+         return responseUtil.internalServerError(MessageKey.ERROR_SERVER.getKey());
       }
    }
 
@@ -91,19 +91,32 @@ public class MemberService {
    @Transactional
    public ResponseEntity<MessageResponse> updateMember(Long id, MemberDto request) {
       try {
-         Optional<Member> memberData = memberRepository.findById(id);
-         if (memberData.isPresent()) {
-            Member member = memberData.get();
-            member.setNama(request.getNama());
-            member.setAlamat(request.getAlamat());
-            member.setEmail(request.getEmail());
-            memberRepository.save(member);
-            return responseUtil.okWithData("success.update.data", member);
-         } else {
-            return responseUtil.notFound("error.not.found");
+
+         // cek id
+         Optional<Member> memberOpt = memberRepository.findById(id);
+         if (memberOpt.isEmpty() || memberOpt.get().isDeleted())
+            return responseUtil.notFound(MessageKey.ERROR_NOT_FOUND.getKey(), id.toString());
+
+         // cek duplicate email
+         if (!memberOpt.get().getId().equals(id)) {
+            return responseUtil.badRequest(MessageKey.EMAIL_DUPLICATE.getKey(),null, request.getEmail());
          }
+
+         Member member = memberOpt.get();
+         // cek no change
+         if (member.getNama().equals(request.getNama()) &&
+               member.getAlamat().equals(request.getAlamat()) &&
+               member.getEmail().equals(request.getEmail())) {
+            return responseUtil.badRequest(MessageKey.ERROR_NO_CHANGE.getKey(), null);
+         }
+
+         member.setNama(request.getNama());
+         member.setAlamat(request.getAlamat());
+         member.setEmail(request.getEmail());
+         memberRepository.save(member);
+         return responseUtil.successWithData(MessageKey.SUCCESS_UPDATE_DATA.getKey(), member, "Member with name " + member.getNama());
       } catch (Exception e) {
-         return responseUtil.internalServerError("error.server");
+         return responseUtil.internalServerError(MessageKey.ERROR_SERVER.getKey());
       }
    }
 
@@ -113,17 +126,16 @@ public class MemberService {
       try {
          Optional<Member> memberOpt = memberRepository.findByIdAndDeletedFalse(id);
 
-         if (memberOpt.isEmpty()) {
-            return responseUtil.notFound("error.not.found");
-         }
+         if (memberOpt.isEmpty() || memberOpt.get().isDeleted())
+            return responseUtil.notFound(MessageKey.ERROR_NOT_FOUND.getKey(), id.toString());
 
          Member member = memberOpt.get();
          member.setDeleted(true);
          memberRepository.save(member);
 
-         return responseUtil.ok("success.delete.data");
+         return responseUtil.success(MessageKey.SUCCESS_DELETE_DATA.getKey(), "Member with id " + id.toString());
       } catch (Exception e) {
-         return responseUtil.internalServerError("error.server");
+         return responseUtil.internalServerError(MessageKey.ERROR_SERVER.getKey());
       }
    }
 }

@@ -53,5 +53,4 @@ public class Member {
    @LastModifiedDate
    private LocalDateTime modifiedDate;
 
-   
 }

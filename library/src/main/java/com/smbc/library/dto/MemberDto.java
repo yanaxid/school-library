@@ -9,6 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor
 
 public class MemberDto {
+   
    private String nama;
    private String alamat;
    private String email;

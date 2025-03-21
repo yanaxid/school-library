@@ -1,7 +1,5 @@
 package com.smbc.library.dto;
 
-
-
 import java.time.LocalDate;
 
 import lombok.Data;
