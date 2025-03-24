@@ -30,6 +30,7 @@ public class BookService {
    public ResponseEntity<MessageResponse> addBook(BookDto request) {
       try {
 
+         //isbn shoud not duplicate
          if (bookRepository.findByIsbnAndDeletedFalse(request.getIsbn()).isPresent()) {
             return responseUtil.badRequest(MessageKey.ISBN_DUPLICATE.getKey(),null, request.getIsbn());
          }
@@ -41,6 +42,7 @@ public class BookService {
                .tahunTerbit(request.getTahunTerbit())
                .isbn(request.getIsbn())
                .kategori(request.getKategori())
+               .stok(request.getStok())
                .deleted(false)
                .build();
 
@@ -67,7 +69,7 @@ public class BookService {
          MessageResponse.Meta meta = MessageResponse.Meta.builder()
                .total(books.getTotalElements())
                .perPage(pageable.getPageSize())
-               .currentPage(pageable.getPageNumber() + 1)
+               .currentPage(pageable.getPageNumber())
                .lastPage(books.getTotalPages())
                .build();
 
@@ -115,6 +117,7 @@ public class BookService {
                book.getPenerbit().equals(request.getPenerbit()) &&
                book.getIsbn().equals(request.getIsbn()) &&
                book.getKategori().equals(request.getKategori()) &&
+               book.getStok().equals(request.getStok()) &&
                book.getTahunTerbit().equals(request.getTahunTerbit())) {
             return responseUtil.badRequest(MessageKey.ERROR_NO_CHANGE.getKey(), null);
          }
@@ -125,6 +128,7 @@ public class BookService {
          book.setTahunTerbit(request.getTahunTerbit());
          book.setIsbn(request.getIsbn());
          book.setKategori(request.getKategori());
+         book.setStok(request.getStok());
          bookRepository.save(book);
 
          return responseUtil.successWithData(MessageKey.SUCCESS_UPDATE_DATA.getKey(), book,

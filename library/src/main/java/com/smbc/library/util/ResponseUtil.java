@@ -34,19 +34,16 @@ public class ResponseUtil {
             meta));
    }
 
-
    public ResponseEntity<MessageResponse> notFound(String messageKey, String... args) {
       return buildResponse(HttpStatus.NOT_FOUND, messageKey, null, null, null, args);
    }
 
-
-   public ResponseEntity<MessageResponse> successWithData(String messageKey, Object data , String...args ) {
+   public ResponseEntity<MessageResponse> successWithData(String messageKey, Object data, String... args) {
       return buildResponse(HttpStatus.OK, messageKey, data, null, null, args);
    }
 
-
    public ResponseEntity<MessageResponse> success(String messageKey, String... args) {
-      return buildResponse(HttpStatus.OK, messageKey, null,null, null, args);
+      return buildResponse(HttpStatus.OK, messageKey, null, null, null, args);
    }
 
    public ResponseEntity<MessageResponse> successWithDataAndMeta(String messageKey, Object data,
@@ -61,4 +58,5 @@ public class ResponseUtil {
    public ResponseEntity<MessageResponse> internalServerError(String messageKey) {
       return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, messageKey, null, null, null);
    }
+  
 }

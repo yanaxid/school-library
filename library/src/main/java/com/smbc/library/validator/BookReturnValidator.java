@@ -4,28 +4,27 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import com.smbc.library.dto.MemberDto;
+import com.smbc.library.dto.BookReturnDto;
 import com.smbc.library.util.ValidationUtil;
 
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class MemberValidator implements Validator {
+public class BookReturnValidator implements Validator {
 
    private final ValidationUtil validationUtil;
 
    @Override
    public boolean supports(Class<?> clazz) {
-      return MemberDto.class.equals(clazz);
+      return BookReturnDto.class.equals(clazz);
    }
 
    @Override
    public void validate(Object target, Errors errors) {
-      MemberDto member = (MemberDto) target;
+      BookReturnDto bookReturnDto = (BookReturnDto) target;
 
-      validationUtil.validateStringField(member.getNama(), "nama", "Nama", errors, 1 , 100);
-      validationUtil.validateStringField(member.getAlamat(), "alamat", "Alamat", errors, 1 , 100);
-      validationUtil.validateEmail(member.getEmail(), "email", "Email", errors);
+      validationUtil.validateLongId(bookReturnDto.getBookRentId(), "bookRentId", "Book Rent Id", errors);
+      validationUtil.validateIsbnList(bookReturnDto.getIsbn(), "isbn", "List ISBN", errors);
    }
 }

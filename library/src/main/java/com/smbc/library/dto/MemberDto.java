@@ -2,12 +2,13 @@ package com.smbc.library.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
+@Data
 @Builder
 @AllArgsConstructor
-
+@NoArgsConstructor
 public class MemberDto {
    
    private String nama;

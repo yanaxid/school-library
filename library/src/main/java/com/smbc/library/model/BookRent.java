@@ -6,15 +6,21 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.smbc.library.enums.RentStatus;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.time.LocalDate;
 
 @Entity
-@Data
+@Table(name = "book_rent")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "book_rent")
 @EntityListeners(AuditingEntityListener.class)
 public class BookRent {
 
@@ -24,12 +30,13 @@ public class BookRent {
    private Long id;
 
    @ManyToOne
-   @JoinColumn(name = "book_id", nullable = false)
-   private Book book;
-
-   @ManyToOne
    @JoinColumn(name = "member_id", nullable = false)
    private Member member;
+
+   @Builder.Default
+   @OneToMany(mappedBy = "bookRent", cascade = CascadeType.ALL)
+   @JsonManagedReference
+   private List<BookRentDetail> bookRentDetails = new ArrayList<>();
 
    @Column(name = "rent_date", nullable = false)
    private LocalDate rentDate;
@@ -40,8 +47,9 @@ public class BookRent {
    @Column(name = "return_date")
    private LocalDate returnDate;
 
+   @Enumerated(EnumType.STRING) 
    @Column(name = "status", nullable = false)
-   private String status;
+   private RentStatus status;
 
    @Builder.Default
    @Column(name = "deleted", nullable = false)

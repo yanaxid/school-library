@@ -5,8 +5,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import com.smbc.library.dto.BookDto;
-import com.smbc.library.enums.MessageKey;
-import com.smbc.library.util.MessageUtil;
+import com.smbc.library.util.ValidationUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BookValidator implements Validator {
 
-   private final MessageUtil messageUtil;
+   private final ValidationUtil validationUtil;
 
    @Override
    public boolean supports(Class<?> clazz) {
@@ -25,49 +24,11 @@ public class BookValidator implements Validator {
    public void validate(Object target, Errors errors) {
       BookDto book = (BookDto) target;
 
-      // Validasi string yang harus diisi dan tidak boleh angka
-      validateStringField(book.getJudul(), "judul", "Judul", errors);
-      validateStringField(book.getPenulis(), "penulis", "Penulis", errors);
-      validateStringField(book.getPenerbit(), "penerbit", "Penerbit", errors);
-      validateStringField2(book.getIsbn(), "isbn", "ISBN", errors);
-      validateStringField(book.getKategori(), "kategori", "Kategori", errors);
-
-      // Validasi angka wajib diisi
-      validateNumericField(book.getTahunTerbit(), "tahun_terbit", "Tahun Terbit", errors);
-   }
-
-   private void validateStringField(String fieldValue, String fieldName, String displayName, Errors errors) {
-      if (isNullOrEmpty(fieldValue)) {
-         reject(errors, fieldName, MessageKey.VALIDATION_REQUIRED, displayName);
-      } else if (isNumeric(fieldValue)) {
-         reject(errors, fieldName, MessageKey.VALIDATION_INVALID_FORMAT, displayName);
-      }
-   }
-
-   private void validateStringField2(String fieldValue, String fieldName, String displayName, Errors errors) {
-      if (isNullOrEmpty(fieldValue)) {
-         reject(errors, fieldName, MessageKey.VALIDATION_REQUIRED, displayName);
-      }
-   }
-
-   private void validateNumericField(Integer fieldValue, String fieldName, String displayName, Errors errors) {
-      if (fieldValue == null) {
-         reject(errors, fieldName, MessageKey.VALIDATION_REQUIRED, displayName);
-      }
-   }
-
-   private boolean isNullOrEmpty(String value) {
-      return value == null || value.trim().isEmpty();
-   }
-
-   private boolean isNumeric(String value) {
-      return value.matches("\\d+");
-   }
-
-   private void reject(Errors errors, String fieldName, MessageKey key, String displayName) {
-      errors.rejectValue(
-            fieldName,
-            key.getKey(),
-            messageUtil.get(key.getKey(), displayName));
+      validationUtil.validateStringField(book.getJudul(), "judul", "Judul", errors, 1 , 100);
+      validationUtil.validateStringField(book.getPenulis(), "penulis", "Penulis", errors, 1 , 100);
+      validationUtil.validateStringField(book.getPenerbit(), "penerbit", "Penerbit", errors, 1 , 100);
+      validationUtil.validateISBN(book.getIsbn(), "isbn", "ISBN", errors);
+      validationUtil.validateStringField(book.getKategori(), "kategori", "Kategori", errors, 1 , 100);
+      validationUtil.validateNumericField(book.getTahunTerbit(), "tahun_terbit", "Tahun Terbit", errors);
    }
 }

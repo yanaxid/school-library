@@ -138,4 +138,7 @@ public class MemberService {
          return responseUtil.internalServerError(MessageKey.ERROR_SERVER.getKey());
       }
    }
+
+
+   
 }

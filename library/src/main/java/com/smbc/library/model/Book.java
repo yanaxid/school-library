@@ -45,6 +45,10 @@ public class Book {
    @Column(name = "deleted", nullable = false)
    private boolean deleted = false;  
 
+   @Builder.Default
+   @Column(name = "stok", nullable = false)
+   private Integer stok = 10;
+
    @CreatedDate
    @Column(name = "created_date", updatable = false)
    private LocalDateTime createdDate;  

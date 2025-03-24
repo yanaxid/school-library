@@ -14,4 +14,5 @@ public class BookDto{
     private Integer tahunTerbit;
     private String isbn;
     private String kategori;
+    private Integer stok;
 }

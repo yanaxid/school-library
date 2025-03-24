@@ -10,10 +10,13 @@ public enum MessageKey {
    ERROR_NO_CHANGE("error.no.change"),
    SUCCESS_UPDATE_DATA("success.update.data"),
    SUCCESS_DELETE_DATA("success.delete.data"),
-   VALIDATION_ERROR("validation.errors"),
    VALIDATION_REQUIRED("validation.required"),
-   VALIDATION_INVALID_FORMAT("validation.invalid_format"),
-   ISBN_DUPLICATE("isbn.duplicate");
+   VALIDATION_INVALID_FORMAT("validation.invalid.format"),
+   VALIDATION_INVALID_FORMAT_VAR("validation.invalid.format.var"),
+   VALIDATION_INVALID_LENGTH("validation.invalid.length"),
+   ISBN_DUPLICATE("isbn.duplicate"),
+   ERROR_FAILED_DELETED("error.failed.delete"),
+   ERROR_GENERAL("error.general");
 
    private final String key;
 
